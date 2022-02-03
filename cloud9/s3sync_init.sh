@@ -65,8 +65,7 @@ if [ ! -d $LOCAL_DIR/$C9_PROJECT_DIR ];then
 fi
 
 if [ ! -d $HOME/environment/scripts ];then
-    mkdir $HOME/environment/scripts
-    aws s3 sync $PRIMARY_S3_BUCKET/scripts $HOME/environment/scripts
+    git clone https://github.com/teramaem51/scripts.git
     echo -e "\nCreate scripts directory."
 fi
 
@@ -89,7 +88,7 @@ fi
 # Create useful link
 
 if [ ! -f $LOCAL_DIR/$C9_PROJECT_DIR/s3sync_project ];then
-    ln -s $HOME/environment/scripts/s3sync_project.sh $LOCAL_DIR/$C9_PROJECT_DIR/s3sync_project
+    ln -fs $(find $HOME/environment/scripts -name "s3sync_project*") $LOCAL_DIR/$C9_PROJECT_DIR/s3sync_project
 fi
 
 cd $LOCAL_DIR/$C9_PROJECT_DIR/
