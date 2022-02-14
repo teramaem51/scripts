@@ -8,7 +8,7 @@
 # Setting variables
 
 DATE_STAMP=$(date '+%Y%m%d')
-ARCHIVE_NAME="$C9_PROJECT"_"$DATE_STAMP.gz"
+ARCHIVE_NAME="$C9_PROJECT"_"$DATE_STAMP.tar.gz"
 
 
 
