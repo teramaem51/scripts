@@ -8,8 +8,8 @@
 # Valiables
 
 CIDR=32
-FROM_PORT=8080
-TO_PORT=8082
+ALLOW_FROM_PORT=8080
+ALLOW_TO_PORT=8085
 DESCRIPTION='Allow access to client, posts and comments of Node.js app.'
 INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
 FIREWALL_ID=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[].Instances[].SecurityGroups[].GroupId[]' --output text)
@@ -24,6 +24,8 @@ for i in 0 1 2
 do
     I_DESCRIPTION=$(aws ec2 describe-security-groups --group-ids $FIREWALL_ID --query "SecurityGroups[].IpPermissions[$i].IpRanges[].Description[]" --output text)
     if [ "$I_DESCRIPTION" = "$DESCRIPTION" ];then
+        FROM_PORT=$(aws ec2 describe-security-groups --group-ids $FIREWALL_ID --query "SecurityGroups[].IpPermissions[$i].FromPort[]" --output text)
+        TO_PORT=$(aws ec2 describe-security-groups --group-ids $FIREWALL_ID --query "SecurityGroups[].IpPermissions[$i].ToPort[]" --output text)
         CIDR_IP=$(aws ec2 describe-security-groups --group-ids $FIREWALL_ID --query "SecurityGroups[].IpPermissions[$i].IpRanges[].CidrIp[]" --output text)
         aws ec2 revoke-security-group-ingress \
             --group-id $FIREWALL_ID \
@@ -49,4 +51,4 @@ fi
 
 aws ec2 authorize-security-group-ingress \
     --group-id $FIREWALL_ID \
-    --ip-permissions IpProtocol=tcp,FromPort=$FROM_PORT,ToPort=$TO_PORT,IpRanges="[{CidrIp=$ALLOW_IP/$CIDR,Description='$DESCRIPTION'}]"
+    --ip-permissions IpProtocol=tcp,FromPort=$ALLOW_FROM_PORT,ToPort=$ALLOW_TO_PORT,IpRanges="[{CidrIp=$ALLOW_IP/$CIDR,Description='$DESCRIPTION'}]"
