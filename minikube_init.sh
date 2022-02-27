@@ -13,3 +13,4 @@ eval $(minikube docker-env)
 
 kubectl completion bash > ./kubectl_comp.sh
 source ./kubectl_comp.sh
+rm ./kubectl_comp.sh
